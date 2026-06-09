@@ -78,14 +78,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Replace-o-Meter" },
+      { name: "description", content: "Job AI Risk analyzes job descriptions to predict AI job displacement risk." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Replace-o-Meter" },
+      { property: "og:description", content: "Job AI Risk analyzes job descriptions to predict AI job displacement risk." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Replace-o-Meter" },
+      { name: "twitter:description", content: "Job AI Risk analyzes job descriptions to predict AI job displacement risk." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/bfee1a1c-8801-46e0-b1da-24f82a212f60/id-preview-fad1fed0--e58ba994-60e0-4309-b10a-7afa94756eb9.lovable.app-1781028561594.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/bfee1a1c-8801-46e0-b1da-24f82a212f60/id-preview-fad1fed0--e58ba994-60e0-4309-b10a-7afa94756eb9.lovable.app-1781028561594.png" },
     ],
     links: [
       {

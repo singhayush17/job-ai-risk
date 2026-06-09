@@ -91,6 +91,33 @@ function Index() {
     run(jd.trim());
   }
 
+  async function onFetchUrl() {
+    const u = url.trim();
+    if (!u) {
+      toast.error("Paste a job posting URL first.");
+      return;
+    }
+    try {
+      new URL(u);
+    } catch {
+      toast.error("That doesn't look like a valid URL.");
+      return;
+    }
+    setFetching(true);
+    try {
+      const { jd: fetched } = await fetchJob({ data: { url: u } });
+      setJd(fetched);
+      toast.success("Job description loaded — analyzing…");
+      navigate({ search: { jd: encodeJD(fetched) }, replace: true });
+      run(fetched);
+    } catch (e) {
+      console.error(e);
+      toast.error("Couldn't fetch that page. Try pasting the JD instead.");
+    } finally {
+      setFetching(false);
+    }
+  }
+
   async function share() {
     const encoded = encodeJD(jd.trim());
     const url = `${window.location.origin}/?jd=${encoded}`;

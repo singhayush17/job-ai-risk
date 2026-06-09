@@ -49,12 +49,13 @@ function Index() {
   const { jd: jdParam } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
   const analyze = useServerFn(analyzeJD);
+  const fetchJob = useServerFn(fetchJD);
   const [jd, setJd] = useState("");
+  const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
     if (jdParam) {
       const decoded = decodeJD(jdParam);
       if (decoded) {

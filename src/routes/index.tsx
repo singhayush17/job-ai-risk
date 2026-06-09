@@ -1,10 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Loader2, Share2, Sparkles, Brain, Copy, Check } from "lucide-react";
+import { Loader2, Share2, Sparkles, Brain, Check, Link2, Download } from "lucide-react";
 import { analyzeJD, type AnalysisResult } from "@/lib/analyze.functions";
+import { fetchJD } from "@/lib/fetch-jd.functions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
@@ -47,8 +49,11 @@ function Index() {
   const { jd: jdParam } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
   const analyze = useServerFn(analyzeJD);
+  const fetchJob = useServerFn(fetchJD);
   const [jd, setJd] = useState("");
+  const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -84,6 +89,33 @@ function Index() {
     }
     navigate({ search: { jd: encodeJD(jd.trim()) }, replace: true });
     run(jd.trim());
+  }
+
+  async function onFetchUrl() {
+    const u = url.trim();
+    if (!u) {
+      toast.error("Paste a job posting URL first.");
+      return;
+    }
+    try {
+      new URL(u);
+    } catch {
+      toast.error("That doesn't look like a valid URL.");
+      return;
+    }
+    setFetching(true);
+    try {
+      const { jd: fetched } = await fetchJob({ data: { url: u } });
+      setJd(fetched);
+      toast.success("Job description loaded — analyzing…");
+      navigate({ search: { jd: encodeJD(fetched) }, replace: true });
+      run(fetched);
+    } catch (e) {
+      console.error(e);
+      toast.error("Couldn't fetch that page. Try pasting the JD instead.");
+    } finally {
+      setFetching(false);
+    }
   }
 
   async function share() {
@@ -141,15 +173,41 @@ function Index() {
         </section>
 
         <section className="rounded-2xl border border-border/60 bg-card/60 backdrop-blur p-4 sm:p-6 shadow-sm">
+          <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-background/40 px-3 py-2">
+            <Link2 className="h-4 w-4 text-muted-foreground shrink-0" />
+            <Input
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); onFetchUrl(); } }}
+              placeholder="Paste a job posting URL (Greenhouse, Lever, careers page…)"
+              className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-0 h-9"
+            />
+            <Button
+              onClick={onFetchUrl}
+              disabled={fetching || loading}
+              variant="secondary"
+              size="sm"
+              className="rounded-full shrink-0"
+            >
+              {fetching ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Fetching</> : <><Download className="h-3.5 w-3.5" /> Fetch</>}
+            </Button>
+          </div>
+
+          <div className="my-3 flex items-center gap-3 text-[10px] uppercase tracking-widest text-muted-foreground/70">
+            <span className="h-px flex-1 bg-border/60" />
+            or paste below
+            <span className="h-px flex-1 bg-border/60" />
+          </div>
+
           <Textarea
             value={jd}
             onChange={(e) => setJd(e.target.value)}
             placeholder="Paste the full job description here…"
-            className="min-h-[200px] resize-y border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
+            className="min-h-[180px] resize-y border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
           />
           <div className="mt-3 flex items-center justify-between gap-3">
             <span className="text-xs text-muted-foreground">{jd.length} chars</span>
-            <Button onClick={onSubmit} disabled={loading} size="lg" className="rounded-full px-6">
+            <Button onClick={onSubmit} disabled={loading || fetching} size="lg" className="rounded-full px-6">
               {loading ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> Analyzing…</>
               ) : (

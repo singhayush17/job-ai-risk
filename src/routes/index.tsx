@@ -1,10 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Loader2, Share2, Sparkles, Brain, Copy, Check } from "lucide-react";
+import { Loader2, Share2, Sparkles, Brain, Check, Link2, Download } from "lucide-react";
 import { analyzeJD, type AnalysisResult } from "@/lib/analyze.functions";
+import { fetchJD } from "@/lib/fetch-jd.functions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({

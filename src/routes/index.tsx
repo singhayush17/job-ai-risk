@@ -56,6 +56,8 @@ function Index() {
   const [fetching, setFetching] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
     if (jdParam) {
       const decoded = decodeJD(jdParam);
       if (decoded) {

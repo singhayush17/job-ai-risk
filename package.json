@@ -1,6 +1,7 @@
 {
   "name": "tanstack_start_ts",
   "private": true,
+  "description": "Will AI Take My Job? analyzes job descriptions and predicts AI displacement risk over the next 10 years.",
   "sideEffects": false,
   "type": "module",
   "scripts": {
